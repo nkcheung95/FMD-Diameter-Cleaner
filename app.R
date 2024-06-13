@@ -1,9 +1,4 @@
-library(shiny)
-library(ggplot2)
-library(tidyverse)
-library(zoo)
-library(scales)
-
+#DIA CLEAN APP
 # Define the packages you want to use
 packages <- c("tidyverse", "zoo", "scales", "ggplot2")
 
@@ -26,7 +21,15 @@ install_load_packages(packages)
 
 # Define UI
 ui <- fluidPage(
-  titlePanel("FMD DIAMETER CLEANER"),
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")  # Link to custom CSS file if needed
+  ),
+  titlePanel(
+    div(
+      h1("Data Cleaning and Visualization"),
+      p(a("README", href = "https://raw.githubusercontent.com/nkcheung95/FMD-Diameter-Cleaner/main/README.md", target = "_blank"))
+    )
+  ),
   sidebarLayout(
     sidebarPanel(
       fileInput("file1", "Choose TXT File", 
