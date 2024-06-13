@@ -1,6 +1,5 @@
 #DIA CLEAN APP
 # Define the packages you want to use
-library(shiny)
 packages <- c("tidyverse", "zoo", "scales", "ggplot2","shiny")
 
 # Function to install and load packages
