@@ -1,6 +1,6 @@
 #DIA CLEAN APP
 # Define the packages you want to use
-packages <- c("tidyverse", "zoo", "scales", "ggplot2","shiny")
+packages <- c("tidyverse", "zoo", "scales", "ggplot2","shiny","ragg")
 
 # Function to install and load packages
 install_load_packages <- function(packages) {
