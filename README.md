@@ -4,7 +4,7 @@
 
 To run the program, paste and run the following command in your RStudio console:
 ```R
-source("https://github.com/nkcheung95/FMD-Diameter-Cleaner/blob/main/app.R?raw=TRUE")
+source("https://github.com/nkcheung95/FMD-Diameter-Cleaner/blob/main/FMD-Dia-Clean-load.r?raw=TRUE")
 ```
 
  
