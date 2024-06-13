@@ -142,7 +142,7 @@ server <- function(input, output, session) {
   # Download handler for cleaned data
   output$download_data <- downloadHandler(
     filename = function() {
-      paste("cleaned_data", Sys.Date(), ".csv", sep = "")
+      paste("cleaned_",input$file1, Sys.Date(), ".csv", sep = "")
     },
     content = function(file) {
       raw_data <- trimmed_data()
