@@ -142,7 +142,7 @@ server <- function(input, output, session) {
   # Download handler for cleaned data
   output$download_data <- downloadHandler(
     filename = function() {
-      paste("cleaned_",input$file1, Sys.Date(), ".csv", sep = "")
+      paste("cleaned_", input$file1$name, Sys.Date(), ".csv", sep = "")
     },
     content = function(file) {
       raw_data <- trimmed_data()
@@ -171,6 +171,9 @@ server <- function(input, output, session) {
       
       cleaned_data <- raw_data[!is.na(raw_data$interp_diameter), ]  # Remove rows with NA interp_diameter
       
+      # Add filename column
+      cleaned_data$filename <- input$file1$name
+      
       write.csv(cleaned_data, file, row.names = FALSE)
     }
   )
@@ -178,4 +181,3 @@ server <- function(input, output, session) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-
