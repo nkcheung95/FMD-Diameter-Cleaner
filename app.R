@@ -1,5 +1,5 @@
 # Define the packages you want to use
-packages <- c("tidyverse", "zoo", "scales", "ggplot2","shiny","ragg")
+packages <- c("tidyverse", "zoo", "scales", "ggplot2", "shiny", "ragg","zip")
 
 # Function to install and load packages
 install_load_packages <- function(packages) {
@@ -32,7 +32,7 @@ ui <- fluidPage(
                   min = 11, max = 201, value = 11, step = 2, ticks = FALSE),
       sliderInput("threshold", "Threshold", 
                   min = 0, max = 3, value = 1.5, step = 0.5),
-      checkboxInput("show_vlines", "Show FMD Lines", value = TRUE),
+      checkboxInput("show_vlines", "Show Vertical Lines", value = TRUE),
       downloadButton("download_data", "Download Cleaned Data")
     ),
     mainPanel(
@@ -151,10 +151,10 @@ server <- function(input, output, session) {
     p
   })
   
-  # Download handler for cleaned data
+  # Download handler for cleaned data and plot
   output$download_data <- downloadHandler(
     filename = function() {
-      paste("cleaned_", input$file1$name, Sys.Date(), ".csv", sep = "")
+      paste("cleaned_", input$file1$name, Sys.Date(), ".zip", sep = "")
     },
     content = function(file) {
       raw_data <- trimmed_data()
@@ -186,7 +186,30 @@ server <- function(input, output, session) {
       # Add filename column
       cleaned_data$filename <- input$file1$name
       
-      write.csv(cleaned_data, file, row.names = FALSE)
+      # Save cleaned data to CSV
+      cleaned_csv <- tempfile(fileext = ".csv")
+      write.csv(cleaned_data, cleaned_csv, row.names = FALSE)
+      
+      # Save the cleaned data plot to PNG
+      cleaned_plot <- ggplot(cleaned_data, aes(x = time, y = interp_diameter, color = outlier)) +
+        geom_point() +
+        scale_x_continuous(breaks = seq(0, max(cleaned_data$time, na.rm = TRUE), by = 30), labels = comma) +
+        labs(x = "Time (seconds)", y = "Interpolated Diameter", title = "Cleaned Data Plot", color = "Interpolated") +
+        theme_minimal() +
+        theme(legend.position = c(0.8, 0.2))  # Move legend inside plot area
+      
+      if (input$show_vlines) {
+        cleaned_plot <- cleaned_plot + geom_vline(xintercept = c(60, 360), color = "red", linetype = "dashed")
+      }
+      
+      cleaned_png <- tempfile(fileext = ".png")
+      ggsave(cleaned_png, cleaned_plot, device = "png")
+      
+      # Create a ZIP file with the CSV and PNG
+      zipfile <- tempfile(fileext = ".zip")
+      zip::zip(zipfile, files = c(cleaned_csv, cleaned_png))
+      
+      file.copy(zipfile, file)
     }
   )
 }
