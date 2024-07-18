@@ -160,7 +160,7 @@ server <- function(input, output, session) {
       # Cleaning and interpolation steps
       window_size <- input$window_size
       
-      raw_data$moving_median <- rollmedian(raw_data$diameter, window_size, align = "center", fill = NA)
+      raw_data$moving_median <- rollmedian(raw_data$diameter, window_size, align = "left", fill = NA)
       iqr <- IQR(raw_data$moving_median, na.rm = TRUE)
       threshold <- input$threshold * iqr  # Dynamic threshold based on IQR of the moving median
       raw_data$outlier <- abs(raw_data$diameter - raw_data$moving_median) > threshold
