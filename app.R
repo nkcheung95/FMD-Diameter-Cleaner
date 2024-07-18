@@ -32,7 +32,7 @@ ui <- fluidPage(
                   min = 11, max = 201, value = 11, step = 2, ticks = FALSE),
       sliderInput("threshold", "Threshold", 
                   min = 0, max = 3, value = 1.5, step = 0.5),
-      checkboxInput("show_vlines", "Show Vertical Lines", value = TRUE),
+      checkboxInput("show_vlines", "Show FMD Lines", value = TRUE),
       downloadButton("download_data", "Download Cleaned Data")
     ),
     mainPanel(
