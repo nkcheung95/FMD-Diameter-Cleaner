@@ -1,4 +1,3 @@
-#DIA CLEAN APP
 # Define the packages you want to use
 packages <- c("tidyverse", "zoo", "scales", "ggplot2","shiny","ragg")
 
@@ -33,6 +32,7 @@ ui <- fluidPage(
                   min = 11, max = 201, value = 11, step = 2, ticks = FALSE),
       sliderInput("threshold", "Threshold", 
                   min = 0, max = 3, value = 1.5, step = 0.5),
+      checkboxInput("show_vlines", "Show Vertical Lines", value = TRUE),
       downloadButton("download_data", "Download Cleaned Data")
     ),
     mainPanel(
@@ -92,12 +92,18 @@ server <- function(input, output, session) {
     raw_data$time <- as.numeric(raw_data$time) - min(as.numeric(raw_data$time))  # Start time at zero
     
     # Generate raw_plot
-    ggplot(raw_data, aes(x = time, y = diameter)) +
+    p <- ggplot(raw_data, aes(x = time, y = diameter)) +
       geom_point() +
-      geom_vline(xintercept = c(60, 360), color = "red", linetype = "dashed") +  # Add vertical lines
       scale_x_continuous(breaks = seq(0, max(raw_data$time, na.rm = TRUE), by = 30), labels = comma) +
       labs(x = "Time (seconds)", y = "Diameter", title = "Raw Data Plot") +
       theme_minimal()
+    
+    # Add vertical lines if checkbox is selected
+    if (input$show_vlines) {
+      p <- p + geom_vline(xintercept = c(60, 360), color = "red", linetype = "dashed")
+    }
+    
+    p
   })
   
   # Plot the cleaned data
@@ -130,13 +136,19 @@ server <- function(input, output, session) {
     cleaned_data <- raw_data[!is.na(raw_data$interp_diameter), ]  # Remove rows with NA interp_diameter
     
     # Generate clean_plot
-    ggplot(cleaned_data, aes(x = time, y = interp_diameter, color = outlier)) +
+    p <- ggplot(cleaned_data, aes(x = time, y = interp_diameter, color = outlier)) +
       geom_point() +
-      geom_vline(xintercept = c(60, 360), color = "red", linetype = "dashed") +  # Add vertical lines
       scale_x_continuous(breaks = seq(0, max(cleaned_data$time, na.rm = TRUE), by = 30), labels = comma) +
-      labs(x = "Time (seconds)", y = "Interpolated Diameter", title = "Cleaned Data Plot",color = "Interpolated") +
+      labs(x = "Time (seconds)", y = "Interpolated Diameter", title = "Cleaned Data Plot", color = "Interpolated") +
       theme_minimal() +
       theme(legend.position = c(0.8, 0.2))  # Move legend inside plot area
+    
+    # Add vertical lines if checkbox is selected
+    if (input$show_vlines) {
+      p <- p + geom_vline(xintercept = c(60, 360), color = "red", linetype = "dashed")
+    }
+    
+    p
   })
   
   # Download handler for cleaned data
